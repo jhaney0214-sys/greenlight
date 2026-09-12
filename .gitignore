@@ -1,0 +1,5 @@
+data/greenlight.db
+data/cache/
+out/
+__pycache__/
+*.pyc

@@ -1,0 +1,70 @@
+{
+  "_comment": [
+    "A niche is defined by tags, because tags are what Steam actually sorts on",
+    "and what a buyer browses by. Tag names are Steam's own and are fussy:",
+    "'RTS' is real, 'Real Time Strategy' is not, and asking SteamSpy for a tag",
+    "that does not exist gets you a silent junk list rather than an error.",
+    "Greenlight refuses those rather than analysing them - if a tag name is",
+    "wrong you will be told, not quietly given numbers about Grand Theft Auto.",
+    "",
+    "require_tags : a game must carry ALL of these. Keep it to one or two.",
+    "any_tags     : and at least one of these. This is the theme filter, and it",
+    "               is the easiest thing to get wrong - see the note below.",
+    "exclude_tags : drop anything carrying these.",
+    "keywords     : optional, matched against name and tags.",
+    "sample_cap   : how many of the biggest games to fetch details for. Each",
+    "               one costs about three seconds on a cold cache.",
+    "sample_released_since : named for its scope. Release dates only exist after",
+    "               the per-game pass, so this filters the detail sample and NOT",
+    "               the population the revenue figures come from.",
+    "",
+    "ALWAYS read the random slice in the report before trusting a number. It is",
+    "there to catch exactly the mistake made below."
+  ],
+
+  "niches": {
+    "drone-rts": {
+      "_note": [
+        "'Modern' was in any_tags and had to come out. It means modern SETTING,",
+        "not modern military, so it admitted any contemporary RTS - Laptop",
+        "Tycoon sat near the median of a supposedly military niche. The tag",
+        "filter was doing exactly what it was told; what it was told was wrong."
+      ],
+      "name": "Modern-military RTS (the Drone Command niche)",
+      "require_tags": ["RTS"],
+      "any_tags": ["Military", "War", "Wargame"],
+      "exclude_tags": ["Anime", "Fantasy", "Nudity", "Sexual Content"],
+      "sample_released_since": 2016,
+      "min_reviews": 10,
+      "sample_cap": 180
+    },
+
+    "drone-rts-loose": {
+      "_note": "The contaminated version, kept so the difference is visible.",
+      "name": "Modern-military RTS, loose theme filter",
+      "require_tags": ["RTS"],
+      "any_tags": ["Military", "War", "Modern", "Wargame", "Tactical"],
+      "exclude_tags": ["Anime", "Fantasy", "Nudity", "Sexual Content"],
+      "sample_released_since": 2016,
+      "min_reviews": 10,
+      "sample_cap": 180
+    },
+
+    "rts-all": {
+      "name": "All real-time strategy",
+      "require_tags": ["RTS"],
+      "exclude_tags": [],
+      "sample_released_since": 2016,
+      "min_reviews": 10,
+      "sample_cap": 180
+    },
+
+    "indie-rts": {
+      "name": "Indie RTS - the realistic comparison set",
+      "require_tags": ["RTS", "Indie"],
+      "sample_released_since": 2018,
+      "min_reviews": 10,
+      "sample_cap": 180
+    }
+  }
+}

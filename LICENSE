@@ -1,0 +1,18 @@
+Copyright (c) 2026 Jhane. All rights reserved.
+
+This software is proprietary and is not licensed for redistribution, modification
+or commercial use by others.
+
+Deliberately not an open-source licence, for the same reason as Farewatch: this
+was built as a side project with the intention that it might eventually earn
+money, and a permissive licence would let anyone stand up a competing service
+from the same code. If that stops being the goal, MIT is a one-file change.
+
+Data used at runtime is not covered by this notice and remains subject to its
+own terms:
+
+  * Steam store and review data from store.steampowered.com, property of Valve.
+  * Ownership and tag data from steamspy.com.
+
+Greenlight reads both through their public endpoints, caches locally, and
+republishes neither.
