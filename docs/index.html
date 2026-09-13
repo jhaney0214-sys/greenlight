@@ -1,0 +1,264 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greenlight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>:root{
+  --paper:#FCFCFA; --paper-sunk:#F4F5F2; --ink:#191C1A; --ink-muted:#5F645F;
+  --rule:#DCE0DA; --accent:#1F6F5C; --accent-sunk:#E9F1ED;
+  --font-display:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --font-body:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#121413; --paper-sunk:#1A1D1B; --ink:#E8EAE5; --ink-muted:#9AA098;
+    --rule:#2C302D; --accent:#6FBFA3; --accent-sunk:#182420;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121413; --paper-sunk:#1A1D1B; --ink:#E8EAE5; --ink-muted:#9AA098;
+  --rule:#2C302D; --accent:#6FBFA3; --accent-sunk:#182420;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--font-body); font-size:clamp(17px,0.5vw + 15.6px,19px);
+  line-height:1.6; margin:0;
+  font-feature-settings:"kern","liga";
+  -webkit-font-smoothing:antialiased;
+}
+.page{max-width:68ch; margin:0 auto; padding:64px 24px 96px}
+@media (min-width:78rem){ .page{max-width:none; width:min(68ch,100%); margin-left:max(24px,calc(50% - 34ch - 13rem)); } }
+
+h1,h2,h3{font-family:var(--font-display); font-weight:600; text-wrap:balance; margin:0}
+h1{font-size:clamp(2.1rem,4.2vw,3rem); line-height:1.08; letter-spacing:-0.021em}
+h2{font-size:clamp(1.35rem,2.1vw,1.6rem); line-height:1.16; letter-spacing:-0.012em;
+   margin:64px 0 16px; padding-bottom:8px; border-bottom:1px solid var(--rule)}
+h3{font-size:1.08rem; line-height:1.3; margin:40px 0 8px}
+p{margin:0 0 16px}
+.standfirst{font-size:1.16em; color:var(--ink-muted); margin:16px 0 40px; line-height:1.5}
+.meta{font-family:var(--font-mono); font-size:0.76rem; color:var(--ink-muted);
+  letter-spacing:0.02em; margin:0 0 8px}
+a{color:var(--accent); text-decoration:underline; text-underline-offset:2px;
+  text-decoration-thickness:1px}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+strong{font-weight:600}
+code{font-family:var(--font-mono); font-size:0.86em; background:var(--paper-sunk); padding:1px 4px}
+pre{font-family:var(--font-mono); font-size:0.82rem; background:var(--paper-sunk);
+  padding:16px; overflow-x:auto; border-radius:2px; line-height:1.5; margin:0 0 16px}
+pre code{background:none; padding:0}
+
+.table-wrap{overflow-x:auto; margin:0 0 24px}
+table{border-collapse:collapse; width:100%; font-size:0.88rem;
+  font-variant-numeric:tabular-nums lining-nums}
+th,td{text-align:left; padding:8px 16px 8px 0; vertical-align:top}
+thead th{font-weight:600; font-size:0.76rem; color:var(--ink-muted);
+  letter-spacing:0.03em; text-transform:none; border-bottom:1.5px solid var(--ink)}
+tbody tr{border-bottom:1px solid var(--rule)}
+tbody tr:last-child{border-bottom:1.5px solid var(--ink)}
+.num{text-align:right; font-family:var(--font-mono); font-size:0.82rem}
+
+.stat{margin:40px 0; }
+.stat b{display:block; font-family:var(--font-display); font-weight:600;
+  font-size:2.5rem; line-height:1.05; color:var(--accent);
+  font-variant-numeric:tabular-nums lining-nums}
+.stat span{display:block; font-size:0.82rem; color:var(--ink-muted); margin-top:4px; max-width:44ch}
+
+.callout{border-left:2px solid var(--accent); background:var(--accent-sunk);
+  padding:16px 24px; margin:0 0 24px}
+.callout p:last-child{margin-bottom:0}
+
+ul{margin:0 0 16px; padding-left:24px}
+li{margin-bottom:4px}
+
+.sn{position:relative}
+.sn-toggle{position:absolute; opacity:0; width:0; height:0}
+.sn-mark::after{counter-increment:sn; content:counter(sn);
+  font-family:var(--font-mono); font-size:0.62em; vertical-align:super;
+  color:var(--accent); cursor:pointer; padding:0 1px}
+body{counter-reset:sn}
+.sn-body{display:none; font-size:0.78rem; line-height:1.45; color:var(--ink-muted)}
+@media (min-width:78rem){
+  .sn-body{display:block; position:absolute; left:calc(100% + 2.5rem); top:0;
+    width:12rem; text-align:left}
+}
+@media (max-width:77.99rem){
+  .sn-toggle:checked ~ .sn-body{display:block; background:var(--accent-sunk);
+    border-left:2px solid var(--accent); padding:8px 12px; margin:8px 0}
+  .sn-mark::after{background:var(--accent-sunk); padding:1px 4px; border-radius:2px}
+}
+
+footer{margin-top:96px; padding-top:16px; border-top:1px solid var(--rule);
+  font-size:0.78rem; color:var(--ink-muted)}
+
+@media print{
+  :root{--paper:#fff;--ink:#000;--ink-muted:#333;--rule:#bbb;--accent:#000;--accent-sunk:#f2f2f2;--paper-sunk:#f2f2f2}
+  body{font-size:11pt}
+  .sn-body{display:block !important; position:static; width:auto}
+  table,figure,pre{break-inside:avoid}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important}}
+
+figure{margin:24px 0 8px}
+figure svg{width:100%; height:auto; display:block}
+figcaption{font-size:0.78rem; color:var(--ink-muted); margin-top:8px; line-height:1.45}
+.chart-wrap{overflow-x:auto}
+.chart-wrap svg{min-width:420px}
+.g-grid{stroke:var(--rule); stroke-width:1}
+.g-axis{fill:var(--ink-muted); font-family:var(--font-mono); font-size:10px}
+.g-band{fill:var(--ink); font-family:var(--font-body); font-size:11px}
+.g-bar{fill:var(--accent)}
+.g-val{fill:var(--ink-muted); font-family:var(--font-mono); font-size:10px}
+</style>
+
+<main class="page">
+
+<p class="meta">Games — market evidence, production</p>
+<h1>Greenlight</h1>
+<p class="standfirst">Market evidence for a game before you build it. It enumerates every title in a niche from Steam's own public data, estimates what each one earned, and reports the distribution rather than the average — because Steam revenue is a power law, and an average across a power law describes no game that exists.</p>
+
+<p>Ask how much an RTS makes on Steam and any average will flatter you, because a handful of titles take nearly everything. The mean is a number about Hearts of Iron IV. The median is a number about you.</p>
+
+<p>So the report is percentiles, counts and shares. There is no mean anywhere in it.</p>
+
+<h2>What a niche actually looks like</h2>
+
+<p>Measured across the modern-military real-time strategy niche: 546 games in the population, 484 with enough signal to estimate revenue at all.<span class="sn"><input type="checkbox" id="sn1" class="sn-toggle" aria-label="Show note 1"><label for="sn1" class="sn-mark"></label><span class="sn-body">Population is every app carrying the tag logic, not a sample. Revenue is estimated, never measured — Steam publishes review counts and nothing else.</span></span></p>
+
+<div class="stat">
+  <b>$57,698</b>
+  <span>Median lifetime revenue in the niche. The game sitting at that median has 140 reviews. The top decile takes 88.2% of every dollar in the population.</span>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Percentile</th><th class="num">Est. revenue</th><th>The game sitting there</th></tr></thead>
+<tbody>
+<tr><td>10th</td><td class="num">$1,825</td><td></td></tr>
+<tr><td>25th</td><td class="num">$6,591</td><td></td></tr>
+<tr><td>Median</td><td class="num">$57,698</td><td>VOIDCRISIS — 140 reviews</td></tr>
+<tr><td>75th</td><td class="num">$433,677</td><td>Tower Dominion — 1,843 reviews</td></tr>
+<tr><td>90th</td><td class="num">$3,422,634</td><td>Ultimate Admiral: Dreadnoughts — 7,169 reviews</td></tr>
+<tr><td>Maximum</td><td class="num">$230,118,272</td><td></td></tr>
+</tbody>
+</table>
+</div>
+
+<p>Of the 484 games estimated, 237 — just under half — are under $50,000 lifetime. Ninety-three clear a million.</p>
+
+<h2>Price decides more than almost anything else</h2>
+
+<p>Median revenue by price band, on the same population. The scale is logarithmic, because a linear one would render every band below $20 as a flat line against the floor.</p>
+
+<figure>
+<div class="chart-wrap">
+<svg viewBox="0 0 600 300" role="img" aria-label="Median revenue by price band. Free: zero. Under ten dollars: 7,855 dollars. Ten to nineteen: 83,695. Twenty to twenty-nine: 1,051,483. Thirty to forty-four: 1,803,999. Forty-five and up: 634,229.">
+  <g class="g-grid">
+    <line x1="120" y1="40" x2="120" y2="258"></line>
+    <line x1="245.7" y1="40" x2="245.7" y2="258"></line>
+    <line x1="371.4" y1="40" x2="371.4" y2="258"></line>
+    <line x1="497.1" y1="40" x2="497.1" y2="258"></line>
+  </g>
+  <g class="g-axis" text-anchor="middle">
+    <text x="120" y="274">$1k</text>
+    <text x="245.7" y="274">$10k</text>
+    <text x="371.4" y="274">$100k</text>
+    <text x="497.1" y="274">$1M</text>
+  </g>
+  <g class="g-band" text-anchor="end">
+    <text x="110" y="69">free</text>
+    <text x="110" y="105">under $10</text>
+    <text x="110" y="141">$10–19</text>
+    <text x="110" y="177">$20–29</text>
+    <text x="110" y="213">$30–44</text>
+    <text x="110" y="249">$45+</text>
+  </g>
+  <g class="g-bar">
+    <rect x="120" y="83" width="112.5" height="22"></rect>
+    <rect x="120" y="119" width="241.7" height="22"></rect>
+    <rect x="120" y="155" width="379.9" height="22"></rect>
+    <rect x="120" y="191" width="409.3" height="22"></rect>
+    <rect x="120" y="227" width="352.3" height="22"></rect>
+  </g>
+  <g class="g-val">
+    <text x="126" y="69">$0 — 62 games</text>
+    <text x="238.5" y="98">$7.9k</text>
+    <text x="367.7" y="134">$83.7k</text>
+    <text x="505.9" y="170">$1.05M</text>
+    <text x="535.3" y="206">$1.80M</text>
+    <text x="478.3" y="242">$634k</text>
+  </g>
+</svg>
+</div>
+<figcaption>Median estimated lifetime revenue by launch price band, 546-game population. Moving from the under-$10 band to $20–29 is a 134-fold difference in the median outcome. It is not evidence that raising a price raises revenue — expensive games are made by studios that could afford to make them expensive, and nothing here separates the price from the budget behind it.</figcaption>
+</figure>
+
+<h2>The two mistakes this is built to avoid</h2>
+
+<p>Both are the same failure — a number that looks authoritative and is quietly about something else — and both were live bugs here before they became guards.</p>
+
+<h3>An unknown tag returns confident junk</h3>
+
+<p>Ask SteamSpy for a tag that does not exist and it does not return an error. It returns a fixed list of seventy unrelated games headed by Grand Theft Auto IV. <code>Drones</code> is not a Steam tag. Neither is <code>Real Time Strategy</code> — the real one is <code>RTS</code>. Analyse either and you get precise, plausible, well-formatted numbers about Grand Theft Auto IV.</p>
+
+<pre><code>$ python gl.py tag Drones
+NOT A TAG: Steam has no tag 'Drones' - SteamSpy answered with its junk
+fallback. Check the exact spelling on a store page.</code></pre>
+
+<h3>Ranking before taking a median</h3>
+
+<p>The first working version enumerated a niche, ranked by review count, kept the top 25 and reported the median. That median came out at $110 million, and the "median game in the niche" was Age of Empires II. Every number was survivorship bias with a decimal point.</p>
+
+<p>The fix is two passes that never mix. The population pass covers every game matching the tag logic and is the only thing allowed to answer questions about revenue, prices and reception. The sample pass covers the biggest hundred-odd, enriched one request at a time, and may only answer questions about tags and release cadence — labelled "top N only" on the page.</p>
+
+<h2>Read the random slice first</h2>
+
+<p>Contamination never sits at the top of a niche. It sits near the median, where nothing is showing it. So the report opens with twelve games drawn at random from the population, seeded so a re-run shows the same twelve.</p>
+
+<p>That section earned its place immediately. A "modern-military RTS" niche turned out to contain <em>Laptop Tycoon</em>, because it carries <code>RTS</code> and <code>Modern</code> — and <code>Modern</code> means modern <em>setting</em>, not modern <em>military</em>. The tag filter was doing exactly what it was told. What it was told was wrong. Dropping <code>Modern</code> took the niche from 717 games to 546.</p>
+
+<div class="callout">
+<p>The slice is still telling on the current definition. It returns <em>Close Combat 3: The Russian Front</em>, <em>Renaissance Kingdom Wars</em> and <em>Heroes of the Three Kingdoms</em> — because <code>Military</code>, <code>War</code> and <code>Wargame</code> catch every period. This niche is really "military RTS, all eras". That is a fair comparison set for RTS buyers and misleading if read literally, so the report says so rather than quietly keeping the flattering name.</p>
+</div>
+
+<p>A separate audit enriches a random sample to measure what is really in the population: 68% kept, 30% released before 2016, and 2% not games at all — downloadable content, soundtracks and demos. A random sample is the only kind that can measure that, because content packs rarely sit near the top of a niche by review count.</p>
+
+<h2>How the money is estimated</h2>
+
+<p>Steam publishes review counts and nothing else, so the estimate runs through the Boxleiter method the indie industry uses:</p>
+
+<pre><code>copies  ≈ reviews × era multiplier (70 in 2013 falling to 25 today)
+revenue ≈ copies × price × 0.62 discount × 0.62 after Steam's cut and tax</code></pre>
+
+<p>The multiplier falls over time because leaving a review became normal. This is a heuristic, not a measurement — wrong for any individual game, directionally reliable across a population, and that is the only claim made for it.</p>
+
+<p>A second, independent estimate comes free: SteamSpy publishes an owner band per game. Where the two disagree by more than 2.5×, the row is marked <code>fair</code> instead of <code>good</code> rather than averaging the disagreement away. Under 30 reviews it is marked <code>poor</code>. On this niche that grades 223 good, 235 fair, 88 poor — so roughly half the population carries a visible caution.</p>
+
+<h2>What it does not tell you</h2>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Question</th><th>Why it cannot answer</th></tr></thead>
+<tbody>
+<tr><td>Whether your game will sell</td><td>It describes a market, not your execution. The gap between the median and the top decile is mostly craft and marketing, and nothing here measures either.</td></tr>
+<tr><td>Wishlist counts</td><td>Steam does not publish them. Review counts at each outcome are the closest public proxy.</td></tr>
+<tr><td>Unreleased competitors</td><td>Coming-soon titles are dropped for lack of data, so a niche can be more crowded than it looks.</td></tr>
+<tr><td>Whether a tag causes revenue</td><td>A tag on the games that earn more may be riding on them rather than driving them.</td></tr>
+<tr><td>Whether the dollar figures are right</td><td>The revenue model has never been checked against a game with publicly disclosed sales. This is the largest remaining gap.</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The shape of the distribution — power law, brutal median, price bands mattering enormously — is robust to the multiplier being off by a good deal. The dollar figures are not. Both statements are on the report itself, above the numbers rather than beneath them.</p>
+
+<h2>Status</h2>
+
+<p>Production. A one-shot analysis tool with no state to rot: 58 tests, no third-party packages, no API keys, no paid data. Everything is cached in SQLite, so a cold run over a few hundred games takes about ten minutes and the same run again is instant.</p>
+
+<footer>
+<p>Figures on this page are from the modern-military RTS niche, 546 games, analysed 2026-09-12. All revenue is estimated by the method described above and none of it is measured.</p>
+</footer>
+
+</main>
