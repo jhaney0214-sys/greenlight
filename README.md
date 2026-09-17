@@ -114,6 +114,21 @@ slice is allowed to answer.
 
 `config/niche.json`. Tags are Steam's own and are fussy about spelling.
 
+**A misspelled tag does not error - it reports an empty market.** The tags in
+this file are a hand-written claim about a vocabulary Valve controls. One that
+Steam does not emit, because it was renamed or mistyped, simply matches nothing,
+and the run completes and reports a niche with no games in it. **That reads as
+"nobody is making this" when it means "the query was wrong"** - and since the
+whole purpose of this tool is to tell you whether a market exists before you
+spend a year building for it, that is the one failure that inverts its output.
+
+Sanity check a new niche against the game count before believing a small one:
+if `require_tags` returns zero or a handful, suspect the tag before the market.
+*(Noted 2026-09-17 from the other direction - Tailings hit the same shape
+against EPA status codes and reported findings at 105 of 199 facilities. See
+`AI Workstation/METHOD.md`, "a table of what a source can say is wrong about
+what it does say".)*
+
 ```json
 "drone-rts": {
   "name": "Modern-military RTS (the Drone Command niche)",
