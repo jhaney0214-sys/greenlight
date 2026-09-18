@@ -114,20 +114,27 @@ slice is allowed to answer.
 
 `config/niche.json`. Tags are Steam's own and are fussy about spelling.
 
-**A misspelled tag does not error - it reports an empty market.** The tags in
-this file are a hand-written claim about a vocabulary Valve controls. One that
-Steam does not emit, because it was renamed or mistyped, simply matches nothing,
-and the run completes and reports a niche with no games in it. **That reads as
-"nobody is making this" when it means "the query was wrong"** - and since the
-whole purpose of this tool is to tell you whether a market exists before you
-spend a year building for it, that is the one failure that inverts its output.
+**A misspelled tag is refused, not analysed.** The tags in this file are a
+hand-written claim about a vocabulary Valve controls, and asking SteamSpy for a
+tag that does not exist gets you a silent junk list or a silent nothing rather
+than an error. `sources.tag` catches both and raises `UnknownTag` naming the
+spelling, so `require_tags` and `any_tags` stop the run rather than reporting a
+market that is not there.
 
-Sanity check a new niche against the game count before believing a small one:
-if `require_tags` returns zero or a handful, suspect the tag before the market.
-*(Noted 2026-09-17 from the other direction - Tailings hit the same shape
-against EPA status codes and reported findings at 105 of 199 facilities. See
-`AI Workstation/METHOD.md`, "a table of what a source can say is wrong about
-what it does say".)*
+`exclude_tags` is the one exception and it is deliberate: a misspelled
+exclusion excludes nothing, which is harmless, so it logs
+`! exclude tag 'x' does not exist, skipped` and carries on.
+
+> **Correction, 2026-09-18.** This section said the opposite on 2026-09-17 -
+> that a misspelled tag silently reports an empty market, which would invert
+> the tool's whole output. That was wrong. `UnknownTag` and the junk-list
+> detector have been in `sources.py` since the **initial commit**; the claim
+> was reasoned from the shape of the SteamSpy API rather than read off the
+> code, written straight into this README as a known limitation, and left
+> there for a day. Verified this time by stubbing `sources.tag` to raise on
+> `"Real Time Strategy"` and running `collect.candidates` for each of the
+> three tag fields, with a positive control first so a dead probe could not
+> pass as a clean result.
 
 ```json
 "drone-rts": {

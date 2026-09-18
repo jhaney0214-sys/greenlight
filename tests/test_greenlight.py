@@ -429,5 +429,64 @@ class TestDateFilterScope(unittest.TestCase):
         self.assertIn("all release years", doc)
 
 
+class TestAMisspelledTagStopsTheRun(unittest.TestCase):
+    """The README makes a claim about this; a claim nothing tests can drift.
+
+    It drifted. On 2026-09-17 the README was edited to say the opposite - that
+    a misspelled tag silently reports an empty market - reasoned from the shape
+    of the SteamSpy API rather than read off the code, and left in place for a
+    day as a documented limitation of a tool whose entire output is whether a
+    market exists. `UnknownTag` had been in `sources.py` since the initial
+    commit. These tests are what stops the claim moving again in either
+    direction.
+    """
+
+    def stub(self, bad="Real Time Strategy"):
+        def fake_tag(name, cache=None, max_age=None):
+            if name == bad:
+                raise sources.UnknownTag("Steam has no tag %r" % name)
+            return {1: app(name="one"), 2: app(name="two")}
+        return fake_tag
+
+    def setUp(self):
+        self._real = sources.tag
+        sources.tag = self.stub()
+
+    def tearDown(self):
+        sources.tag = self._real
+
+    def test_a_good_tag_still_returns_games(self):
+        """The positive control. Without it a dead probe passes as a clean run."""
+        found = collect.candidates({"require_tags": ["RTS"]}, cache=None)
+        self.assertEqual(len(found), 2)
+
+    def test_a_misspelled_require_tag_raises(self):
+        with self.assertRaises(sources.UnknownTag):
+            collect.candidates({"require_tags": ["Real Time Strategy"]},
+                               cache=None)
+
+    def test_a_misspelled_any_tag_raises(self):
+        with self.assertRaises(sources.UnknownTag):
+            collect.candidates({"require_tags": ["RTS"],
+                                "any_tags": ["Real Time Strategy"]}, cache=None)
+
+    def test_a_misspelled_exclude_tag_is_skipped_deliberately(self):
+        """An exclusion that excludes nothing is harmless, so it logs and goes on."""
+        lines = []
+        found = collect.candidates({"require_tags": ["RTS"],
+                                    "exclude_tags": ["Real Time Strategy"]},
+                                   cache=None, log=lines.append)
+        self.assertEqual(len(found), 2)
+        self.assertTrue(any("does not exist" in line for line in lines),
+                        "the skip must be announced, not silent: %s" % lines)
+
+    def test_the_readme_describes_the_behaviour_the_code_has(self):
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(here, "README.md"), encoding="utf-8") as handle:
+            text = handle.read()
+        self.assertIn("A misspelled tag is refused, not analysed.", text)
+        self.assertNotIn("A misspelled tag does not error", text)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
