@@ -1,0 +1,29 @@
+# Runs the test suite. Nothing here builds a report, fetches data or deploys
+# anything - no network call, no secret, and nothing written back to the repo.
+#
+# Read before making this repository public: a workflow can publish something
+# other than the page you meant. This one uploads nothing.
+
+name: tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # No dependencies to install - that is the point.
+      - name: Test
+        run: python -m unittest discover -s tests
