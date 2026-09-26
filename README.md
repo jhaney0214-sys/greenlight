@@ -216,6 +216,7 @@ greenlight/render.py   one self-contained HTML page
 greenlight/store.py    sqlite cache
 tests/                 70 tests
 tools/docclaims.py     vendored docclaims v0.3.3; checks claims.json against the source
+tools/recent.py        releases since a year, including those under min_reviews
 ```
 
 ---
