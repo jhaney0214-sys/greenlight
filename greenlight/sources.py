@@ -147,6 +147,16 @@ def app_details(appid, cache=None, max_age=30 * 86400):
     payload = _cached(cache, url, max_age,
                       lambda: _get(url, "steam", STEAM_INTERVAL))
     entry = (payload or {}).get(str(appid)) or {}
+    # Steam can answer under a different key than the id asked for: on
+    # 2026-09-26 a request for Hearts of Iron IV (394360) came back keyed
+    # "4803900", with steam_appid 394360 inside. Looking up only the requested
+    # key read that as "no record", and enrich() turned no record into "not a
+    # game" - 216 of the drone-rts niche's 546 games, including every big one.
+    # A lone entry whose steam_appid is the one requested is the answer.
+    if not entry and isinstance(payload, dict) and len(payload) == 1:
+        only = next(iter(payload.values())) or {}
+        if (only.get("data") or {}).get("steam_appid") == int(appid):
+            entry = only
     if not entry.get("success"):
         return {}
     return entry.get("data") or {}

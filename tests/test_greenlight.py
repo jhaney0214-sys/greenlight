@@ -488,5 +488,46 @@ class TestAMisspelledTagStopsTheRun(unittest.TestCase):
         self.assertNotIn("A misspelled tag does not error", text)
 
 
+
+class TestAppDetailsKey(unittest.TestCase):
+    """Steam may key its answer by an id other than the one requested.
+
+    Read as "no record", that made enrich() call Hearts of Iron IV "not a
+    game", and with it 216 of the drone-rts niche's 546 entries.
+    """
+
+    class Canned(object):
+        def __init__(self, payload):
+            self.payload = payload
+
+        def get(self, url, max_age):
+            return self.payload
+
+        def put(self, url, value):
+            pass
+
+    def details(self, payload, appid=394360):
+        return sources.app_details(appid, cache=self.Canned(payload))
+
+    def test_a_lone_entry_for_the_requested_app_is_used(self):
+        payload = {"4803900": {"success": True,
+                               "data": {"type": "game", "steam_appid": 394360,
+                                        "name": "Hearts of Iron IV"}}}
+        self.assertEqual(self.details(payload).get("type"), "game")
+
+    def test_the_requested_key_still_wins(self):
+        payload = {"394360": {"success": True,
+                              "data": {"type": "game", "steam_appid": 394360}}}
+        self.assertEqual(self.details(payload).get("type"), "game")
+
+    def test_a_lone_entry_for_another_app_is_not_borrowed(self):
+        payload = {"4803900": {"success": True,
+                               "data": {"type": "dlc", "steam_appid": 4803900}}}
+        self.assertEqual(self.details(payload), {})
+
+    def test_a_failed_lookup_is_still_empty(self):
+        self.assertEqual(self.details({"394360": {"success": False}}), {})
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -214,7 +214,7 @@ greenlight/revenue.py  the estimation model and its error bars
 greenlight/analyze.py  percentiles, tags, prices, cadence
 greenlight/render.py   one self-contained HTML page
 greenlight/store.py    sqlite cache
-tests/                 66 tests
+tests/                 70 tests
 tools/docclaims.py     vendored docclaims v0.3.3; checks claims.json against the source
 ```
 
