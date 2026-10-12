@@ -11,7 +11,11 @@
     "any_tags     : and at least one of these. This is the theme filter, and it",
     "               is the easiest thing to get wrong - see the note below.",
     "exclude_tags : drop anything carrying these.",
-    "keywords     : optional, matched against name and tags.",
+    "keywords     : optional. In the population (every revenue figure) a keyword",
+    "               is matched against the NAME only, because that pass has no",
+    "               tags; in the detail sample, against name and tags. A theme",
+    "               with no Steam tag is better served by any_tags plus reading",
+    "               the random slice.",
     "sample_cap   : how many of the biggest games to fetch details for. Each",
     "               one costs about three seconds on a cold cache.",
     "sample_released_since : named for its scope. Release dates only exist after",
@@ -65,6 +69,21 @@
       "sample_released_since": 2018,
       "min_reviews": 10,
       "sample_cap": 180
+    },
+
+    "space-colony": {
+      "_note": [
+        "Loose: the random slice on 2026-10-12 held Dome Keeper and Ancient",
+        "Aliens: The Game, which are neither. Steam has no tag for terraforming,",
+        "so there is no tighter tag filter for that theme."
+      ],
+      "name": "Off-world colony sims",
+      "require_tags": ["Colony Sim"],
+      "any_tags": ["Space", "Mars", "Sci-fi"],
+      "exclude_tags": ["Anime", "Nudity", "Sexual Content"],
+      "sample_released_since": 2018,
+      "min_reviews": 10,
+      "sample_cap": 120
     }
   }
 }

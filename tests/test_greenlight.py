@@ -296,6 +296,21 @@ class TestNicheFiltering(unittest.TestCase):
         self.assertFalse(ok)
 
 
+class TestKeywordsReachThePopulation(unittest.TestCase):
+    """Keywords filtered only the detail sample, so the revenue figures of a
+    keyword niche were those of every game carrying its tags."""
+
+    def test_no_keywords_keeps_everything(self):
+        self.assertTrue(collect.name_matches("Anything", {}))
+        self.assertTrue(collect.name_matches(None, {"keywords": []}))
+
+    def test_a_keyword_is_matched_in_the_name(self):
+        niche = {"keywords": ["terraform"]}
+        self.assertTrue(collect.name_matches("Plan B: Terraform", niche))
+        self.assertFalse(collect.name_matches("Laptop Tycoon", niche))
+        self.assertFalse(collect.name_matches(None, niche))
+
+
 class TestCache(unittest.TestCase):
 
     def setUp(self):

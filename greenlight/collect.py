@@ -185,6 +185,24 @@ def keeps(app, niche):
     return True, None
 
 
+def name_matches(name, niche):
+    """Whether a game's name passes the niche's keywords. True with no keywords.
+
+    Keywords used to be applied only in `keeps`, which runs on the detail
+    sample. The population, which is where every revenue figure comes from, was
+    never filtered by them, so a niche defined as "Simulation, keyword
+    terraform" reported the earnings of all 17,893 simulation games under a
+    heading about terraforming (2026-10-12). The population pass has no tags,
+    only names, so a keyword is matched against the name here; that is narrower
+    than the name-and-tags match the sample gets, and the run says so.
+    """
+    keywords = [k.lower() for k in (niche.get("keywords") or [])]
+    if not keywords:
+        return True
+    text = (name or "").lower()
+    return any(k in text for k in keywords)
+
+
 def build(niche, cache, log=None):
     """(population, sample, rejected).
 
@@ -202,14 +220,22 @@ def build(niche, cache, log=None):
     min_reviews = niche.get("min_reviews") or 0
 
     population = []
+    dropped_by_name = 0
     for appid, summary in pool.items():
         record = population_record(appid, summary)
+        if not name_matches(record.get("name"), niche):
+            dropped_by_name += 1
+            continue
         if record["total_reviews"] >= min_reviews:
             record["estimate"] = revenue.estimate(record)
             record["confidence"] = revenue.confidence(record, record["estimate"])
             population.append(record)
     population.sort(key=lambda a: a["estimate"].get("revenue_mid") or 0, reverse=True)
     if log:
+        if niche.get("keywords"):
+            log("  keywords: %d apps dropped whose NAME holds none of %s (the "
+                "population pass has names only, not tags)"
+                % (dropped_by_name, list(niche["keywords"])))
         log("  population: %d games with >=%d reviews" % (len(population), min_reviews))
 
     # Rank by review count for the detail pass, and be explicit that this slice
