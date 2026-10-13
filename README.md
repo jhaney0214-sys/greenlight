@@ -251,8 +251,15 @@ tools/validate.py      the copies estimate against 193 games whose real sales ar
   Limits of the check: the survey is developers who answered a newsletter,
   it ends in 2022, and the multiplier used for 2024 and later (25) is outside
   it.
-  **Copies to dollars is still unchecked.** The survey has no prices. The two
-  0.62 factors rest on nothing measured here.
+  **Copies to dollars is still unchecked, and on 2026-10-13 no public data
+  was found to check it with.** The survey has no prices, and two searches
+  for a set of games with units, gross and price together found none. What
+  exists is other calculators' own assumptions: structural deductions (tax
+  and refunds, regional prices about a fifth under the US price, Steam's 30%)
+  that put a developer's take at 41 to 55 percent of list price a copy. The
+  two 0.62 factors here come to 38 percent, a little under that range, so if
+  those calculators are right the dollar figures run low, not high. That is
+  one unmeasured number set beside others, and it is not a check.
 - **Anything about eras.** `Military`, `War` and `Wargame` catch every period, so
   a "modern-military" niche is really "military, all eras" — it contains
   medieval and world-war titles. Fine as a comparison set for RTS buyers,
