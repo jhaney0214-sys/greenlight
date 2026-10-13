@@ -214,9 +214,10 @@ greenlight/revenue.py  the estimation model and its error bars
 greenlight/analyze.py  percentiles, tags, prices, cadence
 greenlight/render.py   one self-contained HTML page
 greenlight/store.py    sqlite cache
-tests/                 72 tests
+tests/                 78 tests
 tools/docclaims.py     vendored docclaims v0.3.3; checks claims.json against the source
 tools/recent.py        releases since a year, including those under min_reviews
+tools/validate.py      the copies estimate against 193 games whose real sales are known
 ```
 
 ---
@@ -232,10 +233,26 @@ tools/recent.py        releases since a year, including those under min_reviews
   lack of data, so a niche can be more crowded than it looks.
 - **Causation from tags.** A tag on the games that earn more may be riding on
   them rather than driving them.
-- **That the revenue model is right.** It has never been checked against a game
-  with publicly disclosed sales. The distribution's *shape* — power law, brutal
-  median, price bands mattering enormously — is robust to the multiplier being
-  off. The dollar figures are not. This is the largest remaining gap.
+- **That the dollar figures are right.** Half of the model has now been
+  checked and half has not.
+  **Reviews to copies, checked 2026-10-13** against GameDiscoverCo's October
+  2022 survey: 193 paid games with the review count beside the lifetime units
+  from the developer's own Steam back end (`python tools/validate.py`, output
+  in `notes/validation-2026-10-13.txt`). Over all of them the estimate is 19%
+  low at the median. For games released 2020 to 2022 with under 1,000 reviews
+  (90 games, the part of the survey most like a new indie release) the median
+  estimate is 1% low, so a niche's median is about where the report puts it.
+  **A single game is another matter.** The report's low-to-high range, the
+  estimate minus and plus 40%, held the real figure for 48% of games; 71% were
+  within a factor of two. Games with 1,000 to 9,999 reviews sold about half
+  again what is estimated (median estimate 33% low), so a niche's top quarter
+  is probably understated. Under 30 reviews the estimate ran 21% high and a
+  quarter of those games sold a third of it or less.
+  Limits of the check: the survey is developers who answered a newsletter,
+  it ends in 2022, and the multiplier used for 2024 and later (25) is outside
+  it.
+  **Copies to dollars is still unchecked.** The survey has no prices. The two
+  0.62 factors rest on nothing measured here.
 - **Anything about eras.** `Military`, `War` and `Wargame` catch every period, so
   a "modern-military" niche is really "military, all eras" — it contains
   medieval and world-war titles. Fine as a comparison set for RTS buyers,
