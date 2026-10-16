@@ -1,10 +1,10 @@
 {
-  "_": "Every count this project states about itself, read from source by tools/claims.py. See tests/test_claims_ledger.py.",
+  "_": "Every count this project's README states about itself, read from source by tools/docclaims.py and by the docclaims workflow (.github/workflows/docclaims.yml). See tests/test_claims_ledger.py.",
   "claims": [
     {
       "id": "test_count",
       "claim": "Tests in the suite",
-      "value": "78 tests",
+      "value": "97 tests",
       "format": "%d tests",
       "derive": {
         "files": [
@@ -13,8 +13,8 @@
         "tests": "python"
       },
       "status": "measured",
-      "anchor": "test methods in tests/test_*.py, counted by parsing the way unittest's loader finds them; measured against `unittest discover` on 2026-09-25",
-      "checked_on": "2026-09-26",
+      "anchor": "test methods in tests/test_*.py, counted by parsing the way unittest's loader finds them; measured against `unittest discover` on 2026-10-16",
+      "checked_on": "2026-10-16",
       "durable": "read from source on every verify, so it cannot outlive the code",
       "appears_in": [
         "README.md",
@@ -23,6 +23,223 @@
       "near": [
         "tests"
       ]
+    },
+    {
+      "id": "validation_games",
+      "claim": "Paid games in GameDiscoverCo's October 2022 survey with both reviews and units",
+      "value": "193 games",
+      "format": "%d games",
+      "derive": {
+        "files": [
+          "notes/validation-2026-10-13.txt"
+        ],
+        "capture": "^GameDiscoverCo survey, October 2022: (\\d+) paid games"
+      },
+      "status": "measured",
+      "anchor": "notes/validation-2026-10-13.txt, printed by tools/validate.py",
+      "checked_on": "2026-10-16",
+      "durable": "read from the committed transcript on every verify",
+      "appears_in": [
+        "README.md"
+      ],
+      "near": [
+        "real sales are known"
+      ],
+      "window": 60
+    },
+    {
+      "id": "validation_recent_small",
+      "claim": "Survey games released 2020-2022 with under 1,000 reviews",
+      "value": "90 games",
+      "format": "%d games",
+      "derive": {
+        "files": [
+          "notes/validation-2026-10-13.txt"
+        ],
+        "capture": "^released 2020-2022, under 1,000 reviews\\s+(\\d+)"
+      },
+      "status": "measured",
+      "anchor": "notes/validation-2026-10-13.txt, printed by tools/validate.py",
+      "checked_on": "2026-10-16",
+      "durable": "read from the committed transcript on every verify",
+      "appears_in": [
+        "README.md"
+      ],
+      "near": [
+        "under 1,000 reviews"
+      ],
+      "window": 40
+    },
+    {
+      "id": "validation_inside_range",
+      "claim": "Survey games whose real units fell inside the report's own low-to-high range",
+      "value": "48%",
+      "format": "%d%%",
+      "derive": {
+        "files": [
+          "notes/validation-2026-10-13.txt"
+        ],
+        "capture": "^every paid game\\s+\\d+(?:\\s+[\\d.]+){6}\\s+(\\d+)%"
+      },
+      "status": "measured",
+      "anchor": "notes/validation-2026-10-13.txt, the 'in the range' column of 'every paid game'",
+      "checked_on": "2026-10-16",
+      "durable": "read from the committed transcript on every verify",
+      "appears_in": [
+        "README.md",
+        "docs/index.html"
+      ],
+      "near": [
+        "held the real figure for",
+        "inside the stated range for"
+      ],
+      "window": 30,
+      "allow": {
+        "40%": "the width of the report's range, stated just before",
+        "71%": "the within-2x share, pinned as its own claim"
+      }
+    },
+    {
+      "id": "validation_within_2x",
+      "claim": "Survey games whose estimate was within a factor of two of their real units",
+      "value": "71%",
+      "format": "%d%%",
+      "derive": {
+        "files": [
+          "notes/validation-2026-10-13.txt"
+        ],
+        "capture": "^every paid game\\s+\\d+(?:\\s+[\\d.]+){6}\\s+\\d+%\\s+(\\d+)%"
+      },
+      "status": "measured",
+      "anchor": "notes/validation-2026-10-13.txt, the 'within 2x' column of 'every paid game'",
+      "checked_on": "2026-10-16",
+      "durable": "read from the committed transcript on every verify",
+      "appears_in": [
+        "README.md",
+        "docs/index.html"
+      ],
+      "near": [
+        "within a factor of two"
+      ],
+      "window": 30,
+      "allow": {
+        "48%": "the inside-the-range share, pinned as its own claim"
+      }
+    },
+    {
+      "id": "wishlist_rows",
+      "claim": "Rows in data/wishlist_pairs.json",
+      "value": "43 rows",
+      "format": "%d rows",
+      "derive": {
+        "files": [
+          "notes/wishlists-2026-10-16.txt"
+        ],
+        "capture": "(\\d+) rows, \\d+ games, each with a link"
+      },
+      "status": "measured",
+      "anchor": "notes/wishlists-2026-10-16.txt, printed by `gl.py wishlists 20000`; tests/test_wishlists.py keeps it equal to what the command prints",
+      "checked_on": "2026-10-16",
+      "durable": "read from the committed transcript on every verify",
+      "appears_in": [
+        "README.md"
+      ],
+      "near": [
+        "holds"
+      ],
+      "window": 40
+    },
+    {
+      "id": "wishlist_games",
+      "claim": "Games in data/wishlist_pairs.json",
+      "value": "33 games",
+      "format": "%d games",
+      "derive": {
+        "files": [
+          "notes/wishlists-2026-10-16.txt"
+        ],
+        "capture": "\\d+ rows, (\\d+) games, each with a link"
+      },
+      "status": "measured",
+      "anchor": "notes/wishlists-2026-10-16.txt, printed by `gl.py wishlists 20000`; tests/test_wishlists.py keeps it equal to what the command prints",
+      "checked_on": "2026-10-16",
+      "durable": "read from the committed transcript on every verify",
+      "appears_in": [
+        "README.md"
+      ],
+      "near": [
+        "rows for"
+      ],
+      "window": 30
+    },
+    {
+      "id": "wishlist_week_n",
+      "claim": "Games with a published first-week (4 to 14 days) pair that enter the fit",
+      "value": "17 first-week pairs",
+      "format": "%d first-week pairs",
+      "derive": {
+        "files": [
+          "notes/wishlists-2026-10-16.txt"
+        ],
+        "capture": "^FIRST WEEK \\(4 to 14 days after launch\\): n = (\\d+) games"
+      },
+      "status": "measured",
+      "anchor": "notes/wishlists-2026-10-16.txt, printed by `gl.py wishlists 20000`",
+      "checked_on": "2026-10-16",
+      "durable": "read from the committed transcript on every verify",
+      "appears_in": [
+        "README.md"
+      ],
+      "near": [
+        "4 to 14 days"
+      ],
+      "window": 40
+    },
+    {
+      "id": "wishlist_week_median",
+      "claim": "Median first-week units per launch wishlist across the published pairs",
+      "value": "0.64 units per wishlist",
+      "format": "%.2f units per wishlist",
+      "derive": {
+        "files": [
+          "notes/wishlists-2026-10-16.txt"
+        ],
+        "capture": "^FIRST WEEK .*\\n  units per wishlist .*median: ([\\d.]+)"
+      },
+      "status": "measured",
+      "anchor": "notes/wishlists-2026-10-16.txt, printed by `gl.py wishlists 20000`",
+      "checked_on": "2026-10-16",
+      "durable": "read from the committed transcript on every verify",
+      "appears_in": [
+        "README.md"
+      ],
+      "near": [
+        "median game sold"
+      ],
+      "window": 40
+    },
+    {
+      "id": "wishlist_week_held",
+      "claim": "Held-out first-week games whose real ratio fell inside the middle half fitted without them",
+      "value": "47%",
+      "format": "%d%%",
+      "derive": {
+        "files": [
+          "notes/wishlists-2026-10-16.txt"
+        ],
+        "capture": "^FIRST WEEK .*\\n(?:.*\\n){3}\\s+the middle half \\(25%-75%\\) held the real figure for (\\d+)%"
+      },
+      "status": "measured",
+      "anchor": "notes/wishlists-2026-10-16.txt, printed by `gl.py wishlists 20000`",
+      "checked_on": "2026-10-16",
+      "durable": "read from the committed transcript on every verify",
+      "appears_in": [
+        "README.md"
+      ],
+      "near": [
+        "game's real figure"
+      ],
+      "window": 30
     }
   ]
 }

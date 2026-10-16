@@ -1,0 +1,23 @@
+# Checks every number claims.json pins in the README and the published page
+# against where it comes from: the test suite, and the committed transcripts in
+# notes/. Its status is the README's "numbers checked" badge. Nothing is
+# built, fetched, uploaded or deployed.
+name: docclaims
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jhaney0214-sys/docclaims@v0.4.0
+        with:
+          path: .
+          scan: "*.md docs/*.html"

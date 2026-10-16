@@ -1,5 +1,7 @@
 # Greenlight
 
+[![numbers checked by docclaims](https://github.com/jhaney0214-sys/greenlight/actions/workflows/docclaims.yml/badge.svg)](https://github.com/jhaney0214-sys/docclaims)
+
 **Status: production.** One-shot analysis tool, no state to rot. See [PRODUCTION.md](../PRODUCTION.md).
 
 Market evidence for a game before you build it. Enumerates every title in a
@@ -171,6 +173,7 @@ python gl.py niche drone-rts      # analyse, write out/index.html
 python gl.py niche drone-rts --cap 40 --json out/analysis.json
 python gl.py audit drone-rts      # measure how clean the population is
 python gl.py cache                # what has been fetched
+python gl.py wishlists 20000 --price 14.99   # units from launch wishlists
 python -m unittest discover -s tests
 ```
 
@@ -203,6 +206,58 @@ that rather than burying it.
 
 ---
 
+## Before launch: wishlists to sales
+
+Everything above starts from review counts, and a game that has not launched
+has none. What its developer holds is wishlists. `gl.py wishlists` turns a
+launch wishlist count into a range of units, from games whose developers or
+publishers printed both numbers:
+
+```bash
+python gl.py wishlists 20000              # notes/wishlists-2026-10-16.txt
+python gl.py wishlists 5000 --price 14.99
+```
+
+`data/wishlist_pairs.json` holds 43 rows for 33 games, gathered on
+2026-10-15 from developer postmortems, How To Market A Game case studies,
+GameDiscoverCo articles and press, each with its link, the source's date and
+the sentence the numbers came from. Nothing in it is estimated here. The
+range for a new game is.
+
+In the first week after launch (4 to 14 days, 17 first-week pairs) the median
+game sold 0.64 units per wishlist and the middle half ran from 0.07 to 1.19.
+Each game was held out in turn and the range refitted on the others: the
+middle half held the held-out game's real figure 47% of the time. That is the
+measured error, and it is about what a fair middle half should do. The first
+day (9 games) and first month (8) get their own ranges; the first year has
+one published pair and is not fitted.
+
+**These pairs lean hard toward hits, and the output says so.** Nine of the
+seventeen first-week games were written up because they sold well, and their
+median is 1.19 units per wishlist. The other eight (developers' own devlogs, a
+write-up of a flop, survey rows quoted as examples) have a median of 0.05.
+Surveys that asked every respondent rather than the hits found a median of
+0.20 (GameDiscoverCo's developer surveys of 2020 and 2021, about 50 and 75
+games) and GameDiscoverCo's own estimates for 2024-25 launches found 0.15,
+falling to 0.10 for games over $10. The command prints those beside the pairs.
+Read the survey medians as the centre and the pairs as how wide the outcomes
+run: from a few hundredths of a unit per wishlist to more than three.
+
+Price is taken when given, but only two first-week pairs state a price of $10
+or more and two state one under it, so no price band is fitted; the
+output lists those pairs and GameDiscoverCo's over-$10 figure instead. The
+first-year line is the first-week range times GameDiscoverCo's median
+year-one multiplier (2.59, or 2.32 under $10 and 2.7 from $10, their own
+estimates for about 5,000 2023-25 launches) and is labelled an estimate. That
+multiplier's spread is not published, so the first-year range is too narrow.
+
+Three rows are kept in the file but out of every fit: a 1.0 launch whose
+wishlist emails Valve never sent, a count of players rather than copies, and
+a "10% of wishlists" that may mean conversions only. Three more give no
+period and are kept for the record.
+
+---
+
 ## Layout
 
 ```
@@ -214,7 +269,9 @@ greenlight/revenue.py  the estimation model and its error bars
 greenlight/analyze.py  percentiles, tags, prices, cadence
 greenlight/render.py   one self-contained HTML page
 greenlight/store.py    sqlite cache
-tests/                 78 tests
+greenlight/wishlists.py  launch wishlists to units, from published pairs
+data/wishlist_pairs.json the pairs, each with a link, a date and a quote
+tests/                 97 tests
 tools/docclaims.py     vendored docclaims v0.3.3; checks claims.json against the source
 tools/recent.py        releases since a year, including those under min_reviews
 tools/validate.py      the copies estimate against 193 games whose real sales are known
@@ -227,8 +284,11 @@ tools/validate.py      the copies estimate against 193 games whose real sales ar
 - **Whether *your* game will sell.** It describes a market, not your execution.
   The gap between the median and the top decile in any niche is mostly craft and
   marketing, and nothing here measures either.
-- **Wishlist counts.** Steam does not publish them. Review counts at each
-  outcome are the closest public proxy and that is what the report gives.
+- **Wishlist counts of other games.** Steam does not publish them. Review
+  counts at each outcome are the closest public proxy and that is what the
+  report gives. Going the other way, from your own wishlists to your sales,
+  is `gl.py wishlists` (above), and it rests on published pairs that lean
+  heavily toward hits.
 - **Anything about unreleased competitors.** Coming-soon titles are dropped for
   lack of data, so a niche can be more crowded than it looks.
 - **Causation from tags.** A tag on the games that earn more may be riding on

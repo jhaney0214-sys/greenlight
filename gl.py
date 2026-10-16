@@ -7,6 +7,7 @@
     python gl.py tag RTS                check a tag exists and how big it is
     python gl.py audit drone-rts        measure how clean the population is
     python gl.py cache                  what has been fetched so far
+    python gl.py wishlists 20000        units from launch wishlists
 """
 
 import argparse
@@ -247,6 +248,19 @@ def cmd_audit(args):
     return 0
 
 
+def cmd_wishlists(args):
+    """Units a game might sell from its launch wishlists, from published pairs."""
+    from greenlight import wishlists
+    if args.wishlists <= 0:
+        print("wishlists must be a positive number")
+        return 1
+    if args.price is not None and args.price < 0:
+        print("price must not be negative")
+        return 1
+    print(wishlists.report(args.wishlists, price=args.price))
+    return 0
+
+
 def cmd_cache(args):
     cache = store.Cache()
     print(cache.stats())
@@ -285,6 +299,12 @@ def main(argv=None):
     p.add_argument("--seed", type=int, default=7)
     p.add_argument("-q", "--quiet", action="store_true")
     p.set_defaults(func=cmd_audit)
+
+    p = sub.add_parser("wishlists",
+                       help="units from launch wishlists, from published pairs")
+    p.add_argument("wishlists", type=int, help="wishlists at launch")
+    p.add_argument("--price", type=float, help="launch price in US dollars")
+    p.set_defaults(func=cmd_wishlists)
 
     p = sub.add_parser("cache", help="what has been fetched")
     p.set_defaults(func=cmd_cache)
