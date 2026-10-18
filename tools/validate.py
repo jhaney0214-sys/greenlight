@@ -93,6 +93,19 @@ def summary(games):
             "within_2x": within2 / len(games)}
 
 
+def interval(games, share=0.8):
+    """(low, high): the factors on the estimate that held the real copies for
+    `share` of these games, split evenly at each end. The report's own range
+    is 1 - MULTIPLIER_SPREAD to 1 + MULTIPLIER_SPREAD, and held 48% of the
+    survey (2026-10-13); this is the range the survey says would hold `share`."""
+    real_over_estimate = sorted(1 / r for r in errors(games))
+    if len(real_over_estimate) < 10:
+        return None
+    tail = (1 - share) / 2
+    cut = statistics.quantiles(real_over_estimate, n=1000, method="inclusive")
+    return cut[round(tail * 1000) - 1], cut[round((1 - tail) * 1000) - 1]
+
+
 def groups(games):
     yield "every paid game", games
     for low, high in ((0, 30), (30, 100), (100, 1000), (1000, 10000), (10000, None)):
@@ -142,6 +155,8 @@ def fetch(offline=False):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--offline", action="store_true")
+    parser.add_argument("--share", type=float, default=0.8,
+                        help="the share of games the printed range should hold (default 0.8)")
     args = parser.parse_args(argv)
     games = parse(fetch(args.offline))
     print("GameDiscoverCo survey, October 2022: %d paid games with reviews and units"
@@ -150,6 +165,15 @@ def main(argv=None):
           % (100 * revenue.MULTIPLIER_SPREAD, 100 * revenue.MULTIPLIER_SPREAD))
     print()
     print(report(games))
+    print()
+    print("The range that would have held %d%% of these games, as factors on the estimate"
+          % (100 * args.share))
+    print("(the report uses %.2f to %.2f):"
+          % (1 - revenue.MULTIPLIER_SPREAD, 1 + revenue.MULTIPLIER_SPREAD))
+    for label, group in groups(games):
+        found = interval(group, args.share)
+        if found:
+            print("  %-40s %4d  %5.2f to %5.2f" % (label, len(group), found[0], found[1]))
     return 0
 
 

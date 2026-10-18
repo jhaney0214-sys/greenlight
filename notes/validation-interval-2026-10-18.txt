@@ -1,0 +1,35 @@
+# tools/validate.py --offline, 2026-10-18: the 2026-10-13 table, plus the range that would
+# have held 80% of the survey games. The report itself still prints -40% to +40%.
+
+GameDiscoverCo survey, October 2022: 193 paid games with reviews and units
+range = the report's own low-to-high, the estimate -40% to +40%
+
+                                            n  real copies/review  estimate / real    in the  within
+                                               q1   median   q3   q1   median   q3    range      2x
+every paid game                           193   29.6  47.6  70.9   0.56  0.81  1.25     48%     71%
+0 to 29 reviews                            32   10.1  24.9  40.6   0.86  1.21  3.00     41%     53%
+30 to 99 reviews                           22   29.0  47.0  77.8   0.57  0.77  1.11     45%     73%
+100 to 999 reviews                         64   30.0  45.4  73.6   0.48  0.75  1.25     47%     69%
+1000 to 9999 reviews                       57   46.4  57.6  74.6   0.52  0.67  0.88     39%     75%
+10000 reviews and over                     18   32.1  42.7  57.0   0.90  1.00  1.28     94%     94%
+released before 2016                       17   57.0  74.6  96.5   0.57  0.74  0.96     59%     76%
+released 2016-2019                         49   36.3  56.8  81.4   0.56  0.79  1.24     47%     73%
+released 2020-2021                         64   31.8  43.8  61.2   0.57  0.80  1.11     50%     78%
+released 2022                              63   20.5  32.6  61.5   0.49  0.92  1.46     43%     60%
+in Early Access                            25   32.6  47.5  67.7   0.48  0.68  1.02     36%     68%
+released 2020-2022, under 1,000 reviews    90   21.2  33.8  52.9   0.59  0.99  1.47     48%     69%
+
+The range that would have held 80% of these games, as factors on the estimate
+(the report uses 0.60 to 1.40):
+  every paid game                           193   0.60 to  2.48
+  0 to 29 reviews                            32   0.13 to  2.40
+  30 to 99 reviews                           22   0.68 to  2.95
+  100 to 999 reviews                         64   0.63 to  2.50
+  1000 to 9999 reviews                       57   0.98 to  2.38
+  10000 reviews and over                     18   0.71 to  1.32
+  released before 2016                       17   0.78 to  2.86
+  released 2016-2019                         49   0.67 to  2.81
+  released 2020-2021                         64   0.63 to  2.16
+  released 2022                              63   0.36 to  2.51
+  in Early Access                            25   0.68 to  2.64
+  released 2020-2022, under 1,000 reviews    90   0.34 to  2.25

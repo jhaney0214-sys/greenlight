@@ -61,6 +61,19 @@ class Summary(unittest.TestCase):
                               self.game(0.3)])
         self.assertAlmostEqual(s["inside_range"], 3 / 5)
 
+    def test_the_interval_holds_the_share_it_is_asked_for(self):
+        # Real copies at 0.1x, 0.2x ... 10x the estimate (101 games, evenly in log).
+        factors = [10 ** (i / 50 - 1) for i in range(101)]
+        games = [self.game(f) for f in factors]
+        low, high = validate.interval(games, 0.8)
+        held = sum(1 for f in factors if low <= f <= high) / len(factors)
+        self.assertAlmostEqual(held, 0.8, delta=0.03)
+        self.assertLess(low, 1.0)
+        self.assertGreater(high, 1.0)
+
+    def test_too_few_games_give_no_interval(self):
+        self.assertIsNone(validate.interval([self.game(1.0)] * 9))
+
     def test_an_empty_group_has_no_summary(self):
         self.assertIsNone(validate.summary([]))
 
