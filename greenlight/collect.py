@@ -30,6 +30,23 @@ def release_year(raw):
     return year if 1997 <= year <= datetime.now().year + 2 else None
 
 
+_TAG = re.compile(r"<[^>]+>")
+
+
+def language_count(raw):
+    """How many languages a store page lists, or None when it lists none.
+
+    Steam writes "English<strong>*</strong>, French, German<br><strong>*</strong>
+    languages with full audio support": a comma list with markup, then a
+    footnote after the first <br>.
+    """
+    if not raw:
+        return None
+    text = _TAG.sub("", str(raw).split("<br>")[0])
+    names = [n.strip(" *") for n in text.split(",")]
+    return len([n for n in names if n]) or None
+
+
 def candidates(niche, cache, log=None):
     """Every app matching the niche's tag logic, with SteamSpy's summary.
 
@@ -131,6 +148,7 @@ def enrich(appid, summary, cache):
     if not isinstance(tags, dict):
         tags = {}
 
+    genres = details.get("genres") or []
     return {
         "appid": int(appid),
         "name": details.get("name") or summary.get("name"),
@@ -142,7 +160,18 @@ def enrich(appid, summary, cache):
         "coming_soon": bool((details.get("release_date") or {}).get("coming_soon")),
         "price_cents": int(price_cents or 0),
         "is_free": bool(details.get("is_free")) or int(price_cents or 0) == 0,
-        "genres": [g.get("description") for g in (details.get("genres") or [])],
+        "genres": [g.get("description") for g in genres],
+        # Store-page features, for `gl.py features`. Steam's appdetails
+        # returns the whole record whatever the filters ask for, so these
+        # come from the response already cached and cost no request.
+        "categories": sorted({c.get("description") for c in
+                              (details.get("categories") or [])
+                              if c.get("description")}),
+        "controller": details.get("controller_support"),
+        "platforms": sorted(k for k, v in (details.get("platforms") or {}).items() if v),
+        "languages": language_count(details.get("supported_languages")),
+        "early_access": any(str(g.get("id")) == "70" for g in genres),
+        "dlc_count": len(details.get("dlc") or []),
         "tags": tags,
         "total_reviews": int(reviews.get("total_reviews") or 0),
         "positive": int(reviews.get("total_positive") or 0),

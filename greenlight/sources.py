@@ -171,6 +171,22 @@ def app_reviews(appid, cache=None, max_age=7 * 86400):
     return (payload or {}).get("query_summary") or {}
 
 
+def review_texts(appid, cache=None, per_page=100, max_age=30 * 86400):
+    """The most helpful English reviews of a game, text included.
+
+    One page only. Steam sorts filter=all by helpfulness, so the first page
+    is the reviews other players voted up, which is the part of a game's
+    reviews most like a consensus. store.steampowered.com's robots.txt
+    (read 2026-10-18) does not disallow /appreviews.
+    """
+    url = (STEAM_REVIEWS % appid) + ("?json=1&filter=all&language=english"
+                                     "&review_type=all&purchase_type=all"
+                                     "&num_per_page=%d" % per_page)
+    payload = _cached(cache, url, max_age,
+                      lambda: _get(url, "steam", STEAM_INTERVAL))
+    return (payload or {}).get("reviews") or []
+
+
 def _cached(cache, url, max_age, fetch):
     if cache is None:
         return fetch()

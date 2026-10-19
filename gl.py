@@ -8,6 +8,7 @@
     python gl.py audit drone-rts        measure how clean the population is
     python gl.py cache                  what has been fetched so far
     python gl.py wishlists 20000        units from launch wishlists
+    python gl.py features drone-rts     which features go with sales, and asks
 """
 
 import argparse
@@ -261,6 +262,42 @@ def cmd_wishlists(args):
     return 0
 
 
+def cmd_features(args):
+    """Features compared across a random sample, and what reviews ask for."""
+    from greenlight import features
+    log = (lambda m: None) if args.quiet else (lambda m: print(m))
+    niche = load_niches(args.config).get(args.key)
+    if niche is None:
+        print("No niche %r." % args.key)
+        return 1
+    cache = store.Cache()
+    try:
+        kept, drawn, population, rejected = features.random_sample(
+            niche, cache, n=args.n, seed=args.seed, log=log)
+        asks, read = features.gather_asks(population, cache, games=args.games, log=log)
+    except sources.UnknownTag as exc:
+        print("\nERROR: %s" % exc)
+        return 1
+    finally:
+        cache.close()
+    rows = features.compare(kept, min_n=args.min_n, seed=args.seed,
+                            skip=["tag: %s" % t for t in niche.get("require_tags") or ()])
+    text = features.report(niche, rows, kept, drawn, population, rejected, asks, read)
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as fh:
+            fh.write(text)
+        log("Wrote %s" % args.out)
+    # Review text holds emoji and box glyphs a Windows console cannot
+    # encode; on 2026-10-18 that crashed two runs after all the fetching.
+    sys.stdout.write(text.encode(sys.stdout.encoding or "utf-8", "replace")
+                     .decode(sys.stdout.encoding or "utf-8"))
+    if args.json:
+        with open(args.json, "w", encoding="utf-8") as fh:
+            json.dump({"rows": rows, "asks": asks, "sample": kept}, fh, indent=1, default=str)
+        log("Wrote %s" % args.json)
+    return 0
+
+
 def cmd_cache(args):
     cache = store.Cache()
     print(cache.stats())
@@ -305,6 +342,21 @@ def main(argv=None):
     p.add_argument("wishlists", type=int, help="wishlists at launch")
     p.add_argument("--price", type=float, help="launch price in US dollars")
     p.set_defaults(func=cmd_wishlists)
+
+    p = sub.add_parser("features",
+                       help="which features go with sales, and what reviews ask for")
+    p.add_argument("key")
+    p.add_argument("--config")
+    p.add_argument("-n", type=int, default=150, help="how many to draw at random")
+    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--min-n", type=int, default=8,
+                   help="fewest games with, and without, a feature to compare it")
+    p.add_argument("--games", type=int, default=8,
+                   help="how many of the most-reviewed games to read reviews of")
+    p.add_argument("--out", help="also write the report here")
+    p.add_argument("--json", help="also write rows, asks and sample here")
+    p.add_argument("-q", "--quiet", action="store_true")
+    p.set_defaults(func=cmd_features)
 
     p = sub.add_parser("cache", help="what has been fetched")
     p.set_defaults(func=cmd_cache)

@@ -174,6 +174,7 @@ python gl.py niche drone-rts --cap 40 --json out/analysis.json
 python gl.py audit drone-rts      # measure how clean the population is
 python gl.py cache                # what has been fetched
 python gl.py wishlists 20000 --price 14.99   # units from launch wishlists
+python gl.py features physics-build --out out/features.txt   # features and asks
 python -m unittest discover -s tests
 ```
 
@@ -258,6 +259,49 @@ period and are kept for the record.
 
 ---
 
+## Which features go with sales, and what players ask for
+
+```bash
+python gl.py features physics-build --out out/features-physics-build.txt
+```
+
+The tag table in the niche report comes from the biggest games, where
+everything sold. It can say what winners carry, but not whether losers
+carry it too, and a feature on 90% of hits is no signal if it is on 90% of
+flops. `features` draws its sample **at random from the population**
+(150 by default, seeded) and compares the games with each feature against
+the games without it:
+
+- the median estimated revenue on each side, and their ratio with a 90%
+  bootstrap interval; a feature reads **higher** or **lower** only when the
+  whole interval is on one side of 1;
+- how often it appears in the top quarter and in the bottom half;
+- the median release year on each side, because features come and go
+  (Family Sharing was switched on for nearly every game in 2024).
+
+Features are the store page's categories (co-op, Workshop, level editor,
+achievements), controller support, Mac and Linux builds, language count,
+Early Access, DLC, and the tags. Steam returns all of these in the record
+the niche report already caches, so they cost no extra request.
+
+**It reads associations, not causes, and some run backwards.** Valve
+grants Trading Cards only after a game sells, and studios make DLC for games
+that sold; both are marked `(earned)`. Games under the niche's
+`min_reviews` are not in the population, so this compares modest games with
+big ones, not flops with hits. At 150 games most features show no clear
+difference, and the report says so rather than ranking noise.
+
+The second half reads the most helpful English reviews (one page of up to
+100) of the niche's eight most-reviewed games and keeps every sentence that
+says what is missing: "I wish", "needs more", "if only", "should add". Each
+comes with the reviewer's hours, its helpful votes, whether the review was
+positive, and a link. Recurring words are counted once per review. These are
+first-person voices, which is what a demand check counts and what a web
+search rarely finds. The phrase list is a net with holes: it misses asks
+phrased any other way and catches some complaints that are not asks.
+
+---
+
 ## Layout
 
 ```
@@ -270,8 +314,9 @@ greenlight/analyze.py  percentiles, tags, prices, cadence
 greenlight/render.py   one self-contained HTML page
 greenlight/store.py    sqlite cache
 greenlight/wishlists.py  launch wishlists to units, from published pairs
+greenlight/features.py   features against sales on a random sample; asks from reviews
 data/wishlist_pairs.json the pairs, each with a link, a date and a quote
-tests/                 99 tests
+tests/                 115 tests
 tools/docclaims.py     vendored docclaims v0.3.3; checks claims.json against the source
 tools/recent.py        releases since a year, including those under min_reviews
 tools/validate.py      the copies estimate against 193 games whose real sales are known
