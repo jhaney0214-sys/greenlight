@@ -84,6 +84,46 @@
       "sample_released_since": 2018,
       "min_reviews": 10,
       "sample_cap": 120
+    },
+
+    "space-conquest": {
+      "_note": [
+        "For the solar-system Risk pitch (IDEAS.md Round 35). Steam has no tag",
+        "for Risk-likes or for the solar system, so this is space strategy at",
+        "the turn-based and grand end; read the random slice."
+      ],
+      "name": "Turn-based and grand space strategy",
+      "require_tags": ["Space"],
+      "any_tags": ["Turn-Based Strategy", "Grand Strategy", "4X", "Board Game"],
+      "exclude_tags": ["Anime", "Nudity", "Sexual Content"],
+      "sample_released_since": 2016,
+      "min_reviews": 10,
+      "sample_cap": 150
+    },
+
+    "physics-build": {
+      "_note": "For the build-to-purpose woodworking pitch (Round 35): physics builders and goal-builders.",
+      "name": "Physics building games",
+      "require_tags": ["Physics", "Building"],
+      "any_tags": ["Puzzle", "Sandbox", "Simulation"],
+      "exclude_tags": ["Anime", "Nudity", "Sexual Content"],
+      "sample_released_since": 2016,
+      "min_reviews": 10,
+      "sample_cap": 150
+    },
+
+    "relaxing-craft": {
+      "_note": [
+        "For the whittling pitch (Round 35). Steam has no carving tag; this is",
+        "relaxing simulation with crafting or job-sim play, and it is loose."
+      ],
+      "name": "Relaxing craft and job simulators",
+      "require_tags": ["Relaxing", "Simulation"],
+      "any_tags": ["Crafting", "Job Simulator"],
+      "exclude_tags": ["Anime", "Nudity", "Sexual Content"],
+      "sample_released_since": 2016,
+      "min_reviews": 10,
+      "sample_cap": 150
     }
   }
 }
